@@ -58,7 +58,7 @@ class DataGenSequence(Sequence):
         i = idx * batch_size
 
         length = min(batch_size, (len(self.names) - i))
-        batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float32)
+        batch_x = np.empty((length, img_rows, img_cols, 3), dtype=np.float32)
         batch_y = np.empty((length, img_rows, img_cols, 3), dtype=np.float32)
 
         for i_batch in range(length):
@@ -80,6 +80,8 @@ class DataGenSequence(Sequence):
             y = image / 255.
 
             batch_x[i_batch, :, :, 0] = x
+            batch_x[i_batch, :, :, 1] = np.random.uniform(0, 1, (320, 320))
+            batch_x[i_batch, :, :, 2] = np.random.uniform(0, 1, (320, 320))
             batch_y[i_batch, :, :, 0:3] = y
 
             i += 1

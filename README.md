@@ -10,13 +10,13 @@ This repository is to do Indoor Semantic Segmentation with SegNet.
 
 ## Dataset
 
-![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/dataset.png)
+![image](https://github.com/foamliu/Character-Coloring/raw/master/images/dataset.png)
 
-Follow the [instruction](http://sysu-hcp.net/lip/index.php) to download Look-Into-Person dataset.
+Follow the [instruction](http://sysu-hcp.net/lip/index.php) to download Character-Coloring dataset.
 
 ## Architecture
 
-![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/segnet.png)
+![image](https://github.com/foamliu/Character-Coloring/raw/master/images/segnet.png)
 
 
 ## ImageNet Pretrained Models
@@ -47,13 +47,13 @@ $ python demo.py
 
 Input | Merged | Output |
 |---|---|---|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/0_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/0_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/0_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/1_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/1_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/1_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/2_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/2_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/2_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/3_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/3_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/3_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/4_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/4_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/4_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/5_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/5_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/5_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/6_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/6_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/6_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/7_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/7_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/7_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/8_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/8_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/8_out.png)|
-|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/9_image.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/9_gt.png)| ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/9_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/0_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/0_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/0_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/1_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/1_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/1_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/2_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/2_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/2_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/3_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/3_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/3_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/4_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/4_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/4_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/5_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/5_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/5_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/6_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/6_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/6_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/7_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/7_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/7_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/8_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/8_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/8_out.png)|
+|![image](https://github.com/foamliu/Character-Coloring/raw/master/images/9_image.png) | ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/9_gt.png)| ![image](https://github.com/foamliu/Character-Coloring/raw/master/images/9_out.png)|

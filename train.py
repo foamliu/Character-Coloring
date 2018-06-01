@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
     new_model.compile(optimizer='nadam', loss=prediction_loss)
 
-    print(model.summary())
+    print(new_model.summary())
 
     # Final callbacks
     callbacks = [tensor_board, model_checkpoint, early_stop, reduce_lr]
@@ -76,5 +76,5 @@ if __name__ == '__main__':
                             verbose=1,
                             callbacks=callbacks,
                             use_multiprocessing=True,
-                            workers=int(get_available_cpus() * 0.80)
+                            workers=int(get_available_cpus() * 0.20)
                             )
