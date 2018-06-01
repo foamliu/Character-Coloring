@@ -6,8 +6,7 @@ import cv2 as cv
 import keras.backend as K
 import numpy as np
 
-from config import num_classes
-from data_generator import random_choice, safe_crop, to_bgr
+from data_generator import random_choice, safe_crop
 from model import build_encoder_decoder
 
 if __name__ == '__main__':
