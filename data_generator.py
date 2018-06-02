@@ -66,15 +66,15 @@ class DataGenSequence(Sequence):
             filename = os.path.join(self.images_folder, name + '.jpg')
             rgb = io.imread(filename)
             lab = color.rgb2lab(rgb)
-            image_size = image.shape[:2]
+            image_size = lab.shape[:2]
             gray = lab[:, :, 0]
 
             x, y = random_choice(image_size)
-            image = safe_crop(image, x, y)
+            lab = safe_crop(lab, x, y)
             gray = safe_crop(gray, x, y)
 
             if np.random.random_sample() > 0.5:
-                image = np.fliplr(image)
+                lab = np.fliplr(lab)
                 gray = np.fliplr(gray)
 
             x = gray / 100.
