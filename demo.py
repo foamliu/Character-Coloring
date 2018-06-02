@@ -3,6 +3,7 @@ import os
 import random
 
 import cv2 as cv
+from skimage import io, color
 import keras.backend as K
 import numpy as np
 
@@ -29,28 +30,34 @@ if __name__ == '__main__':
     for i in range(len(samples)):
         image_name = samples[i]
         filename = os.path.join(test_images_folder, image_name + '.jpg')
-        image = cv.imread(filename)
-        image_size = image.shape[:2]
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        rgb = io.imread(filename)
+        lab = color.rgb2lab(rgb)
+        image_size = rgb.shape[:2]
 
         x, y = random_choice(image_size)
-        image = safe_crop(image, x, y)
-        gray = safe_crop(gray, x, y)
+        lab = safe_crop(lab, x, y)
+        gray = lab[:, :, 0]
         print('Start processing image: {}'.format(filename))
 
-        x_test = np.empty((1, img_rows, img_cols, 3), dtype=np.float32)
-        x_test[0, :, :, 0] = gray / 255.
+        x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
+        x_test[0, :, :, 0] = gray / 100.
 
-        out = model.predict(x_test)
-        out = np.reshape(out, (img_rows, img_cols, 3))
-        out = out * 255.
+        ab = model.predict(x_test)
+        ab = np.reshape(ab, (img_rows, img_cols, 2))
+        ab = (ab - 0.5) * 127.
+
+        out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
+        out[:, :, 0] = gray
+        out[:, :, 1:3] = ab
         out = out.astype(np.uint8)
+        out = color.lab2rgb(out)
 
         if not os.path.exists('images'):
             os.makedirs('images')
 
-        cv.imwrite('images/{}_image.png'.format(i), gray)
-        cv.imwrite('images/{}_gt.png'.format(i), image)
-        cv.imwrite('images/{}_out.png'.format(i), out)
+        gray = (gray / 100. * 255.).astype(np.uint8)
+        io.imsave('images/{}_image.png'.format(i), gray)
+        io.imsave('images/{}_gt.png'.format(i), rgb)
+        io.imsave('images/{}_out.png'.format(i), out)
 
     K.clear_session()

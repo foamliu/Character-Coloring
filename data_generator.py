@@ -1,11 +1,11 @@
 import os
 import random
 
-import cv2 as cv
 import numpy as np
 from keras.utils import Sequence
+from skimage import io, color
 
-from config import batch_size, img_rows, img_cols, num_classes, color_map
+from config import batch_size, img_rows, img_cols
 
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
 train_categories_folder = 'data/instance-level_human_parsing/Training/Categories'
@@ -59,14 +59,15 @@ class DataGenSequence(Sequence):
 
         length = min(batch_size, (len(self.names) - i))
         batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float32)
-        batch_y = np.empty((length, img_rows, img_cols, 3), dtype=np.float32)
+        batch_y = np.empty((length, img_rows, img_cols, 2), dtype=np.float32)
 
         for i_batch in range(length):
             name = self.names[i]
             filename = os.path.join(self.images_folder, name + '.jpg')
-            image = cv.imread(filename)
+            rgb = io.imread(filename)
+            lab = color.rgb2lab(rgb)
             image_size = image.shape[:2]
-            gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+            gray = lab[:, :, 0]
 
             x, y = random_choice(image_size)
             image = safe_crop(image, x, y)
@@ -76,11 +77,11 @@ class DataGenSequence(Sequence):
                 image = np.fliplr(image)
                 gray = np.fliplr(gray)
 
-            x = gray / 255.
-            y = image / 255.
+            x = gray / 100.
+            y = (lab[:, :, 0:2] + 128) / 255.
 
             batch_x[i_batch, :, :, 0] = x
-            batch_y[i_batch, :, :, 0:3] = y
+            batch_y[i_batch, :, :, 0:2] = y
 
             i += 1
 
