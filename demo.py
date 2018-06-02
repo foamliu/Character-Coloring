@@ -45,6 +45,7 @@ if __name__ == '__main__':
 
         out = model.predict(x_test)
         out = np.reshape(out, (img_rows, img_cols, 3))
+        out = out * 255.
         out = out.astype(np.uint8)
 
         if not os.path.exists('images'):
