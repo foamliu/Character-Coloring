@@ -11,7 +11,8 @@ def prediction_loss(y_true, y_pred):
     c_g = y_true[:, :, :, 0:3]
     c_p = y_pred[:, :, :, 0:3]
     diff = c_p - c_g
-    return K.mean(K.sqrt(K.square(diff) + epsilon_sqr))
+    # return K.mean(K.sqrt(K.square(diff) + epsilon_sqr))
+    return K.mean(K.square(diff))
 
 
 # getting the number of GPUs
