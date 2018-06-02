@@ -12,7 +12,7 @@ def build_encoder_decoder():
     kernel = 3
 
     # Encoder
-    input_tensor = Input(shape=(320, 320, 3))
+    input_tensor = Input(shape=(320, 320, 1))
     x = Conv2D(64, (kernel, kernel), activation='relu', padding='same', name='conv1_1',
                kernel_initializer='he_normal',
                bias_initializer='zeros')(input_tensor)

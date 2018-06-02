@@ -40,8 +40,6 @@ if __name__ == '__main__':
 
         x_test = np.empty((1, img_rows, img_cols, 3), dtype=np.float32)
         x_test[0, :, :, 0] = gray / 255.
-        x_test[0, :, :, 1] = np.random.uniform(0, 1, (320, 320))
-        x_test[0, :, :, 2] = np.random.uniform(0, 1, (320, 320))
 
         out = model.predict(x_test)
         out = np.reshape(out, (img_rows, img_cols, 3))
