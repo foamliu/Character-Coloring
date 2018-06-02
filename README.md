@@ -16,7 +16,7 @@ Follow the [instruction](http://sysu-hcp.net/lip/index.php) to download Characte
 
 ## Architecture
 
-![image](https://github.com/foamliu/Character-Coloring/raw/master/images/segnet.png)
+![image](https://github.com/foamliu/Character-Coloring/raw/master/images/color_net.png)
 
 
 ## ImageNet Pretrained Models
