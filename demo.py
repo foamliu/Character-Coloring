@@ -42,10 +42,11 @@ if __name__ == '__main__':
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
         x_test[0, :, :, 0] = lab[:, :, 0] / 100.
 
+        # L: [0, 100], a: [-86.185, 98.254], b: [-107.863, 94.482].
         ab = model.predict(x_test)
         ab = np.reshape(ab, (img_rows, img_cols, 2))
-        a = ab[:, :, 0] * 255. - 127.
-        b = ab[:, :, 1] * 255. - 128
+        a = ab[:, :, 0] * (86.185 + 98.254) - 86.185
+        b = ab[:, :, 1] * (107.863 + 94.482) - 107.863
 
         out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
         out[:, :, 0] = lab[:, :, 0]

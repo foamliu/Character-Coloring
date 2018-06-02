@@ -67,7 +67,7 @@ class DataGenSequence(Sequence):
             filename = os.path.join(self.images_folder, name + '.jpg')
             bgr = cv.imread(filename)
             rgb = cv.cvtColor(bgr, cv.COLOR_BGR2RGB)
-            # L: 0 to 100, a: -127 to 128, b: -128 to 127.
+            # L: [0, 100], a: [-86.185, 98.254], b: [-107.863, 94.482].
             lab = color.rgb2lab(rgb)
             image_size = lab.shape[:2]
 
@@ -78,8 +78,8 @@ class DataGenSequence(Sequence):
                 lab = np.fliplr(lab)
 
             x = lab[:, :, 0] / 100.
-            y_a = (lab[:, :, 1] + 127) / 255.
-            y_b = (lab[:, :, 2] + 128) / 255.
+            y_a = (lab[:, :, 1] + 86.185) / (86.185 + 98.254)
+            y_b = (lab[:, :, 2] + 107.863) / (107.863 + 94.482)
 
             batch_x[i_batch, :, :, 0] = x
             batch_y[i_batch, :, :, 0] = y_a

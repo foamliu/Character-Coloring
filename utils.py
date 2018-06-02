@@ -4,8 +4,6 @@ import cv2 as cv
 import keras.backend as K
 from tensorflow.python.client import device_lib
 
-from config import epsilon_sqr
-
 
 def prediction_loss(y_true, y_pred):
     c_g = y_true[:, :, :, 0:2]
