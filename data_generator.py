@@ -1,9 +1,10 @@
 import os
 import random
 
+import cv2 as cv
 import numpy as np
 from keras.utils import Sequence
-from skimage import io, color
+from skimage import color
 
 from config import batch_size, img_rows, img_cols
 
@@ -64,24 +65,25 @@ class DataGenSequence(Sequence):
         for i_batch in range(length):
             name = self.names[i]
             filename = os.path.join(self.images_folder, name + '.jpg')
-            rgb = io.imread(filename)
+            bgr = cv.imread(filename)
+            rgb = cv.cvtColor(bgr, cv.COLOR_BGR2RGB)
+            # L: 0 to 100, a: -127 to 128, b: -128 to 127.
             lab = color.rgb2lab(rgb)
             image_size = lab.shape[:2]
-            gray = lab[:, :, 0]
 
             x, y = random_choice(image_size)
             lab = safe_crop(lab, x, y)
-            gray = safe_crop(gray, x, y)
 
             if np.random.random_sample() > 0.5:
                 lab = np.fliplr(lab)
-                gray = np.fliplr(gray)
 
-            x = gray / 100.
-            y = (lab[:, :, 0:2] + 128) / 255.
+            x = lab[:, :, 0] / 100.
+            y_a = (lab[:, :, 1] + 127) / 255.
+            y_b = (lab[:, :, 2] + 128) / 255.
 
             batch_x[i_batch, :, :, 0] = x
-            batch_y[i_batch, :, :, 0:2] = y
+            batch_y[i_batch, :, :, 0] = y_a
+            batch_y[i_batch, :, :, 1] = y_b
 
             i += 1
 
