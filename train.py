@@ -53,7 +53,7 @@ if __name__ == '__main__':
             new_model.load_weights(pretrained_path)
 
     # sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
-    new_model.compile(optimizer='nadam', loss=prediction_loss)
+    new_model.compile(optimizer='nadam', loss='mean_squared_error')
 
     print(new_model.summary())
 

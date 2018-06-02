@@ -1,6 +1,6 @@
 import keras.backend as K
 import tensorflow as tf
-from keras.layers import Input, Conv2D, UpSampling2D, BatchNormalization, ZeroPadding2D, MaxPooling2D, Reshape, Concatenate
+from keras.layers import Input, Conv2D, UpSampling2D, BatchNormalization, MaxPooling2D, Reshape, Concatenate
 from keras.models import Model
 from keras.utils import multi_gpu_model
 from keras.utils import plot_model
@@ -176,11 +176,10 @@ def build_encoder_decoder():
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
 
-    x = Conv2D(2, (5, 5), activation='sigmoid', padding='same', name='pred', kernel_initializer='he_normal',
+    outputs = Conv2D(2, (5, 5), activation='sigmoid', padding='same', name='pred', kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
-    outputs = BatchNormalization()(x)
 
-    model = Model(inputs=input_tensor, outputs=outputs, name="SegNet")
+    model = Model(inputs=input_tensor, outputs=outputs, name="ColorNet")
     return model
 
 
