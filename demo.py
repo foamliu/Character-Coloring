@@ -13,7 +13,7 @@ if __name__ == '__main__':
     img_rows, img_cols = 320, 320
     channel = 3
 
-    model_weights_path = 'models/model.13-0.0052.hdf5'
+    model_weights_path = 'models/model.03-0.0091.hdf5'
     model = build_encoder_decoder()
     model.load_weights(model_weights_path)
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         out[:, :, 1] = a
         out[:, :, 2] = b
         out = out.astype(np.uint8)
-        out = cv.cvtColor(bgr, cv.COLOR_LAB2BGR)
+        out = cv.cvtColor(out, cv.COLOR_LAB2BGR)
 
         if not os.path.exists('images'):
             os.makedirs('images')
