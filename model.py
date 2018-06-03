@@ -177,7 +177,7 @@ def build_encoder_decoder():
     x = BatchNormalization()(x)
 
     outputs = Conv2D(2, (5, 5), activation='sigmoid', padding='same', name='pred', kernel_initializer='he_normal',
-               bias_initializer='zeros')(x)
+                     bias_initializer='zeros')(x)
 
     model = Model(inputs=input_tensor, outputs=outputs, name="ColorNet")
     return model
