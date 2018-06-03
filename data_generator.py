@@ -4,7 +4,6 @@ import random
 import cv2 as cv
 import numpy as np
 from keras.utils import Sequence
-from skimage import color
 
 from config import batch_size, img_rows, img_cols
 
@@ -67,8 +66,8 @@ class DataGenSequence(Sequence):
             filename = os.path.join(self.images_folder, name + '.jpg')
             bgr = cv.imread(filename)
             rgb = cv.cvtColor(bgr, cv.COLOR_BGR2RGB)
-            # L: [0, 100], a: [-86.185, 98.254], b: [-107.863, 94.482].
-            lab = color.rgb2lab(rgb)
+            # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
+            lab = cv.cvtColor(rgb, cv.COLOR_RGB2LAB)
             image_size = lab.shape[:2]
 
             x, y = random_choice(image_size)
@@ -77,9 +76,9 @@ class DataGenSequence(Sequence):
             if np.random.random_sample() > 0.5:
                 lab = np.fliplr(lab)
 
-            x = lab[:, :, 0] / 100.
-            y_a = (lab[:, :, 1] + 86.185) / (86.185 + 98.254)
-            y_b = (lab[:, :, 2] + 107.863) / (107.863 + 94.482)
+            x = lab[:, :, 0] / 255.
+            y_a = (lab[:, :, 1] - 42) / 184
+            y_b = (lab[:, :, 2] - 20) / 203
 
             batch_x[i_batch, :, :, 0] = x
             batch_y[i_batch, :, :, 0] = y_a
