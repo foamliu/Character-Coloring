@@ -29,7 +29,9 @@ if __name__ == '__main__':
     for i in range(len(samples)):
         image_name = samples[i]
         filename = os.path.join(test_images_folder, image_name + '.jpg')
+        # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
         bgr = cv.imread(filename)
+        # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
         image_size = bgr.shape[:2]
 
@@ -41,7 +43,7 @@ if __name__ == '__main__':
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
         x_test[0, :, :, 0] = lab[:, :, 0] / 255.
 
-        # L: [0, 100], a: [-86.185, 98.254], b: [-107.863, 94.482].
+        # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         ab = model.predict(x_test)
         ab = np.reshape(ab, (img_rows, img_cols, 2))
         a = ab[:, :, 0] * 184 + 42

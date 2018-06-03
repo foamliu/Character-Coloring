@@ -64,10 +64,10 @@ class DataGenSequence(Sequence):
         for i_batch in range(length):
             name = self.names[i]
             filename = os.path.join(self.images_folder, name + '.jpg')
+            # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
             bgr = cv.imread(filename)
-            rgb = cv.cvtColor(bgr, cv.COLOR_BGR2RGB)
             # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
-            lab = cv.cvtColor(rgb, cv.COLOR_RGB2LAB)
+            lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
             image_size = lab.shape[:2]
 
             x, y = random_choice(image_size)
