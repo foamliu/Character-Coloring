@@ -81,8 +81,8 @@ class DataGenSequence(Sequence):
         i = idx * batch_size
 
         length = min(batch_size, (len(self.names) - i))
-        batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float32)
-        batch_y = np.empty((length, img_rows, img_cols, self.nb_q), dtype=np.float32)
+        batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float16)
+        batch_y = np.empty((length, img_rows, img_cols, self.nb_q), dtype=np.float16)
 
         for i_batch in range(length):
             name = self.names[i]
