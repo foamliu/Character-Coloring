@@ -3,14 +3,13 @@ import random
 
 import cv2 as cv
 import numpy as np
+import sklearn.neighbors as nn
 from keras.utils import Sequence
 
-from config import batch_size, img_rows, img_cols
+from config import batch_size, img_rows, img_cols, nb_neighbors
 
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
-train_categories_folder = 'data/instance-level_human_parsing/Training/Categories'
 valid_images_folder = 'data/instance-level_human_parsing/Validation/Images'
-valid_categories_folder = 'data/instance-level_human_parsing/Validation/Categories'
 
 
 def random_choice(image_size):
@@ -33,6 +32,26 @@ def safe_crop(mat, x, y):
     return ret
 
 
+def get_soft_encoding(image_ab, nn_finder, nb_q):
+    image_ab = image_ab.astype(np.int32) - 128
+    h, w = image_ab.shape[:2]
+    a = np.ravel(image_ab[:, :, 0])
+    b = np.ravel(image_ab[:, :, 1])
+    ab = np.vstack((a, b)).T
+    # Get the distance to and the idx of the nearest neighbors
+    dist_neighb, idx_neigh = nn_finder.kneighbors(ab)
+    # Smooth the weights with a gaussian kernel
+    sigma_neighbor = 5
+    wts = np.exp(-dist_neighb ** 2 / (2 * sigma_neighbor ** 2))
+    wts = wts / np.sum(wts, axis=1)[:, np.newaxis]
+    # format the target
+    y = np.zeros((ab.shape[0], nb_q))
+    idx_pts = np.arange(ab.shape[0])[:, np.newaxis]
+    y[idx_pts, idx_neigh] = wts
+    y = y.reshape(h, w, nb_q)
+    return y
+
+
 class DataGenSequence(Sequence):
     def __init__(self, usage):
         self.usage = usage
@@ -40,16 +59,20 @@ class DataGenSequence(Sequence):
         if usage == 'train':
             id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
             self.images_folder = train_images_folder
-            self.categories_folder = train_categories_folder
         else:
             id_file = 'data/instance-level_human_parsing/Validation/val_id.txt'
             self.images_folder = valid_images_folder
-            self.categories_folder = valid_categories_folder
 
         with open(id_file, 'r') as f:
             self.names = f.read().splitlines()
 
         np.random.shuffle(self.names)
+
+        # Load the array of quantized ab value
+        q_ab = np.load("data/pts_in_hull.npy")
+        self.nb_q = q_ab.shape[0]
+        # Fit a NN to q_ab
+        self.nn_finder = nn.NearestNeighbors(n_neighbors=nb_neighbors, algorithm='ball_tree').fit(q_ab)
 
     def __len__(self):
         return int(np.ceil(len(self.names) / float(batch_size)))
@@ -59,7 +82,7 @@ class DataGenSequence(Sequence):
 
         length = min(batch_size, (len(self.names) - i))
         batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float32)
-        batch_y = np.empty((length, img_rows, img_cols, 2), dtype=np.float32)
+        batch_y = np.empty((length, img_rows, img_cols, self.nb_q), dtype=np.float32)
 
         for i_batch in range(length):
             name = self.names[i]
@@ -77,12 +100,10 @@ class DataGenSequence(Sequence):
                 lab = np.fliplr(lab)
 
             x = lab[:, :, 0] / 255.
-            y_a = (lab[:, :, 1] - 42) / 184
-            y_b = (lab[:, :, 2] - 20) / 203
+            y = get_soft_encoding(lab[:, :, 1:], self.nn_finder, self.nb_q)
 
             batch_x[i_batch, :, :, 0] = x
-            batch_y[i_batch, :, :, 0] = y_a
-            batch_y[i_batch, :, :, 1] = y_b
+            batch_y[i_batch] = y
 
             i += 1
 

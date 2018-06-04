@@ -10,7 +10,7 @@ if __name__ == '__main__':
         for g in range(256):
             for bb in range(256):
                 im = np.array((bb, g, r), np.uint8).reshape(1, 1, 3)
-                cv.cvtColor(im, cv.COLOR_BGR2LAB, im)  # tranform it to LAB
+                cv.cvtColor(im, cv.COLOR_BGR2LAB, im)  # transform it to LAB
                 L[i] = im[0, 0, 0]
                 a[i] = im[0, 0, 1]
                 b[i] = im[0, 0, 2]
