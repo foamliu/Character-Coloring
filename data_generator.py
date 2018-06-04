@@ -85,7 +85,7 @@ class DataGenSequence(Sequence):
 
         length = min(batch_size, (len(self.names) - i))
         batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float32)
-        batch_y = np.empty((length, img_rows, img_cols, self.nb_q), dtype=np.int32)
+        batch_y = np.empty((length, img_rows, img_cols, self.nb_q), dtype=np.float32)
 
         for i_batch in range(length):
             name = self.names[i]
@@ -106,7 +106,7 @@ class DataGenSequence(Sequence):
             y = get_soft_encoding(lab[:, :, 1:], self.nn_finder, self.nb_q)
 
             batch_x[i_batch, :, :, 0] = x
-            batch_y[i_batch, :, :, :] = y
+            batch_y[i_batch] = y
 
             i += 1
 
