@@ -6,14 +6,8 @@ from tensorflow.python.client import device_lib
 
 
 def categorical_crossentropy_color(y_true, y_pred):
-    # Flatten
-    n, h, w, q = y_true.shape
-    y_true = K.reshape(y_true, (n * h * w, q))
-    y_pred = K.reshape(y_pred, (n * h * w, q))
-
     cross_ent = K.categorical_crossentropy(y_pred, y_true)
     cross_ent = K.mean(cross_ent, axis=-1)
-
     return cross_ent
 
 
