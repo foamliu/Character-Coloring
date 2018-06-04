@@ -1,6 +1,6 @@
 # Character Coloring
 
-[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg?style=flat-square)](https://github.com/OpenImageIO/oiio/blob/master/LICENSE)
+![apm](https://img.shields.io/apm/l/vim-mode.svg)
 
 This repository is to repeat Colorful Image Colorization with Color-Net.
 
