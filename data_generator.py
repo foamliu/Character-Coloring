@@ -45,8 +45,8 @@ def get_soft_encoding(image_ab, nn_finder, nb_q):
     wts = np.exp(-dist_neighb ** 2 / (2 * sigma_neighbor ** 2))
     wts = wts / np.sum(wts, axis=1)[:, np.newaxis]
     # format the target
-    y = np.zeros((image_ab.shape[0], nb_q))
-    idx_pts = np.arange(image_ab.shape[0])[:, np.newaxis]
+    y = np.zeros((ab.shape[0], nb_q))
+    idx_pts = np.arange(ab.shape[0])[:, np.newaxis]
     y[idx_pts, idx_neigh] = wts
     y = y.reshape(h, w, nb_q)
     return y
@@ -72,7 +72,7 @@ class DataGenSequence(Sequence):
         q_ab = np.load("data/pts_in_hull.npy")
         self.nb_q = q_ab.shape[0]
         # Fit a NN to q_ab
-        self.nn_finder = nn.NearestNeighbors(n_neighbors=1, algorithm='ball_tree').fit(q_ab)
+        self.nn_finder = nn.NearestNeighbors(n_neighbors=nb_neighbors, algorithm='ball_tree').fit(q_ab)
 
     def __len__(self):
         return int(np.ceil(len(self.names) / float(batch_size)))

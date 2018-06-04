@@ -1,15 +1,15 @@
 import multiprocessing
 
 import cv2 as cv
-import keras.backend as K
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 
 
-def categorical_crossentropy_color(y_true, y_pred):
-    cross_ent = K.categorical_crossentropy(y_pred, y_true)
-    cross_ent = K.mean(cross_ent, axis=-1)
-    return cross_ent
+def softmax_cross_entropy(y_true, y_pred):
+    loss = tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_true,
+                                                      logits=y_pred)
+    loss_mean = tf.reduce_mean(loss)
+    return loss_mean
 
 
 def sparse_cross_entropy(y_true, y_pred):
