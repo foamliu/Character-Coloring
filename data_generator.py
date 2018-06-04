@@ -34,6 +34,7 @@ def safe_crop(mat, x, y):
 
 
 def get_soft_encoding(image_ab, nn_finder, nb_q):
+    image_ab = image_ab.astype(np.int32) - 128
     h, w = image_ab.shape[:2]
     a = np.ravel(image_ab[:, :, 0])
     b = np.ravel(image_ab[:, :, 1])
@@ -106,7 +107,7 @@ class DataGenSequence(Sequence):
             y = get_soft_encoding(lab[:, :, 1:], self.nn_finder, self.nb_q)
 
             batch_x[i_batch, :, :, 0] = x
-            batch_y[i_batch, :, :, :] = to_categorical(y, self.nb_q)
+            batch_y[i_batch, :, :, :] = y
 
             i += 1
 
