@@ -32,7 +32,7 @@ def safe_crop(mat, x, y):
     return ret
 
 
-def get_soft_encoding(image_ab, nn_finder):
+def get_soft_encoding(image_ab, nn_finder, nb_q):
     image_ab = image_ab.astype(np.int32) - 128
     h, w = image_ab.shape[:2]
     a = np.ravel(image_ab[:, :, 0])
@@ -40,7 +40,15 @@ def get_soft_encoding(image_ab, nn_finder):
     ab = np.vstack((a, b)).T
     # Get the distance to and the idx of the nearest neighbors
     dist_neighb, idx_neigh = nn_finder.kneighbors(ab)
-    y = idx_neigh.reshape(h, w)
+    # Smooth the weights with a gaussian kernel
+    sigma_neighbor = 5
+    wts = np.exp(-dist_neighb ** 2 / (2 * sigma_neighbor ** 2))
+    wts = wts / np.sum(wts, axis=1)[:, np.newaxis]
+    # format the target
+    y = np.zeros((image_ab.shape[0], nb_q))
+    idx_pts = np.arange(image_ab.shape[0])[:, np.newaxis]
+    y[idx_pts, idx_neigh] = wts
+    y = y.reshape(h, w, nb_q)
     return y
 
 
@@ -92,7 +100,7 @@ class DataGenSequence(Sequence):
                 lab = np.fliplr(lab)
 
             x = lab[:, :, 0] / 255.
-            y = get_soft_encoding(lab[:, :, 1:], self.nn_finder)
+            y = get_soft_encoding(lab[:, :, 1:], self.nn_finder, self.nb_q)
 
             batch_x[i_batch, :, :, 0] = x
             batch_y[i_batch] = y
