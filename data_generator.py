@@ -32,7 +32,7 @@ def safe_crop(mat, x, y):
     return ret
 
 
-def get_soft_encoding(image_ab, nn_finder, nb_q):
+def get_soft_encoding(image_ab, nn_finder):
     image_ab = image_ab.astype(np.int32) - 128
     h, w = image_ab.shape[:2]
     a = np.ravel(image_ab[:, :, 0])
@@ -64,7 +64,7 @@ class DataGenSequence(Sequence):
         q_ab = np.load("data/pts_in_hull.npy")
         self.nb_q = q_ab.shape[0]
         # Fit a NN to q_ab
-        self.nn_finder = nn.NearestNeighbors(n_neighbors=nb_neighbors, algorithm='ball_tree').fit(q_ab)
+        self.nn_finder = nn.NearestNeighbors(n_neighbors=1, algorithm='ball_tree').fit(q_ab)
 
     def __len__(self):
         return int(np.ceil(len(self.names) / float(batch_size)))
@@ -92,7 +92,7 @@ class DataGenSequence(Sequence):
                 lab = np.fliplr(lab)
 
             x = lab[:, :, 0] / 255.
-            y = get_soft_encoding(lab[:, :, 1:], self.nn_finder, self.nb_q)
+            y = get_soft_encoding(lab[:, :, 1:], self.nn_finder)
 
             batch_x[i_batch, :, :, 0] = x
             batch_y[i_batch] = y
