@@ -35,8 +35,8 @@ def safe_crop(mat, x, y):
 
 def get_soft_encoding(image_ab, nn_finder, nb_q):
     h, w = image_ab.shape[:2]
-    a = image_ab[:, :, 0]
-    b = image_ab[:, :, 1]
+    a = np.ravel(image_ab[:, :, 0])
+    b = np.ravel(image_ab[:, :, 1])
     ab = np.vstack((a, b)).T
     sigma_neighbor = 5
 
