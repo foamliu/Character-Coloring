@@ -53,7 +53,8 @@ if __name__ == '__main__':
             new_model.load_weights(pretrained_path)
 
     # sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
-    new_model.compile(optimizer='nadam', loss=categorical_crossentropy_color)
+    decoder_target = tf.placeholder(dtype='int32', shape=(None, None, None, None))
+    new_model.compile(optimizer='nadam', loss=categorical_crossentropy_color, target_tensors=[decoder_target])
 
     print(new_model.summary())
 
