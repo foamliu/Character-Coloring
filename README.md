@@ -1,5 +1,7 @@
 # Character Coloring
 
+[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg?style=flat-square)](https://github.com/OpenImageIO/oiio/blob/master/LICENSE)
+
 This repository is to repeat Colorful Image Colorization with Color-Net.
 
 ## Dependencies
