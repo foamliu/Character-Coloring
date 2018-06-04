@@ -14,3 +14,4 @@ epsilon_sqr = epsilon ** 2
 
 mat = scipy.io.loadmat('human_colormap.mat')
 color_map = (mat['colormap'] * 256).astype(np.int32)
+nb_neighbors = 5

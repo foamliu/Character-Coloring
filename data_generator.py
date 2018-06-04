@@ -3,9 +3,10 @@ import random
 
 import cv2 as cv
 import numpy as np
+import sklearn.neighbors as nn
 from keras.utils import Sequence
 
-from config import batch_size, img_rows, img_cols, num_classes, color_map
+from config import batch_size, img_rows, img_cols, nb_neighbors
 
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
 train_categories_folder = 'data/instance-level_human_parsing/Training/Categories'
@@ -33,6 +34,24 @@ def safe_crop(mat, x, y):
     return ret
 
 
+def get_soft_encoding(X, nn_finder, nb_q):
+    sigma_neighbor = 5
+
+    # Get the distance to and the idx of the nearest neighbors
+    dist_neighb, idx_neigh = nn_finder.kneighbors(X)
+
+    # Smooth the weights with a gaussian kernel
+    wts = np.exp(-dist_neighb ** 2 / (2 * sigma_neighbor ** 2))
+    wts = wts / np.sum(wts, axis=1)[:, np.newaxis]
+
+    # format the target
+    Y = np.zeros((X.shape[0], nb_q))
+    idx_pts = np.arange(X.shape[0])[:, np.newaxis]
+    Y[idx_pts, idx_neigh] = wts
+
+    return Y
+
+
 class DataGenSequence(Sequence):
     def __init__(self, usage):
         self.usage = usage
@@ -50,6 +69,12 @@ class DataGenSequence(Sequence):
             self.names = f.read().splitlines()
 
         np.random.shuffle(self.names)
+
+        # Load the array of quantized ab value
+        q_ab = np.load("data/pts_in_hull.npy")
+        self.nb_q = q_ab.shape[0]
+        # Fit a NN to q_ab
+        self.nn_finder = nn.NearestNeighbors(n_neighbors=nb_neighbors, algorithm='ball_tree').fit(q_ab)
 
     def __len__(self):
         return int(np.ceil(len(self.names) / float(batch_size)))

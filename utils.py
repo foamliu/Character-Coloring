@@ -4,15 +4,26 @@ import cv2 as cv
 import keras.backend as K
 from tensorflow.python.client import device_lib
 
-from config import epsilon_sqr
 
+def categorical_crossentropy_color(y_true, y_pred):
 
-def prediction_loss(y_true, y_pred):
-    c_g = y_true[:, :, :, 0:3]
-    c_p = y_pred[:, :, :, 0:3]
-    diff = c_p - c_g
-    # return K.mean(K.sqrt(K.square(diff) + epsilon_sqr))
-    return K.mean(K.square(diff))
+    # Flatten
+    n, h, w, q = y_true.shape
+    y_true = K.reshape(y_true, (n * h * w, q))
+    y_pred = K.reshape(y_pred, (n * h * w, q))
+
+    weights = y_true[:, 313:]  # extract weight from y_true
+    weights = K.concatenate([weights] * 313, axis=1)
+    y_true = y_true[:, :-1]  # remove last column
+    y_pred = y_pred[:, :-1]  # remove last column
+
+    # multiply y_true by weights
+    y_true = y_true * weights
+
+    cross_ent = K.categorical_crossentropy(y_pred, y_true)
+    cross_ent = K.mean(cross_ent, axis=-1)
+
+    return cross_ent
 
 
 # getting the number of GPUs
