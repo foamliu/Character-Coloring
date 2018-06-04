@@ -26,7 +26,7 @@ def sparse_cross_entropy(y_true, y_pred):
     """
 
     # Calculate the loss. This outputs a
-    # 3-rank tensor of shape [batch_size, img_rows, img_cols]
+    # 3-rank tensor of shape [batch_size, img_rows, img_cols, num_classes]
     loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y_true,
                                                           logits=y_pred)
 
