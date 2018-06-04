@@ -38,20 +38,9 @@ def get_soft_encoding(image_ab, nn_finder, nb_q):
     a = np.ravel(image_ab[:, :, 0])
     b = np.ravel(image_ab[:, :, 1])
     ab = np.vstack((a, b)).T
-    sigma_neighbor = 5
-
     # Get the distance to and the idx of the nearest neighbors
     dist_neighb, idx_neigh = nn_finder.kneighbors(ab)
-
-    # Smooth the weights with a gaussian kernel
-    wts = np.exp(-dist_neighb ** 2 / (2 * sigma_neighbor ** 2))
-    wts = wts / np.sum(wts, axis=1)[:, np.newaxis]
-
-    # format the target
-    y = np.zeros((ab.shape[0], nb_q))
-    idx_pts = np.arange(ab.shape[0])[:, np.newaxis]
-    y[idx_pts, idx_neigh] = wts
-    y = y.reshape(h, w, nb_q)
+    y = idx_neigh.reshape(h, w)
     return y
 
 
