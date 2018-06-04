@@ -34,20 +34,24 @@ def safe_crop(mat, x, y):
 
 
 def get_soft_encoding(image_ab, nn_finder, nb_q):
+    h, w = image_ab.shape[:2]
+    a = image_ab[:, :, 0]
+    b = image_ab[:, :, 1]
+    ab = np.vstack((a, b)).T
     sigma_neighbor = 5
 
     # Get the distance to and the idx of the nearest neighbors
-    dist_neighb, idx_neigh = nn_finder.kneighbors(image_ab)
+    dist_neighb, idx_neigh = nn_finder.kneighbors(ab)
 
     # Smooth the weights with a gaussian kernel
     wts = np.exp(-dist_neighb ** 2 / (2 * sigma_neighbor ** 2))
     wts = wts / np.sum(wts, axis=1)[:, np.newaxis]
 
     # format the target
-    y = np.zeros((image_ab.shape[0], nb_q))
-    idx_pts = np.arange(image_ab.shape[0])[:, np.newaxis]
+    y = np.zeros((ab.shape[0], nb_q))
+    idx_pts = np.arange(ab.shape[0])[:, np.newaxis]
     y[idx_pts, idx_neigh] = wts
-
+    y = y.reshape(h, w, nb_q)
     return y
 
 
