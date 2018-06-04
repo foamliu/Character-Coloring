@@ -13,7 +13,7 @@ if __name__ == '__main__':
     img_rows, img_cols = 320, 320
     channel = 3
 
-    model_weights_path = 'models/model.03-0.0091.hdf5'
+    model_weights_path = 'models/model.33-0.0073.hdf5'
     model = build_encoder_decoder()
     model.load_weights(model_weights_path)
 
@@ -45,12 +45,13 @@ if __name__ == '__main__':
 
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         ab = model.predict(x_test)
-        ab = np.reshape(ab, (img_rows, img_cols, 2))
+        ab = ab[0, :, :, :]
+        L = lab[:, :, 0]
         a = ab[:, :, 0] * 184 + 42
         b = ab[:, :, 1] * 203 + 20
 
         out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
-        out[:, :, 0] = lab[:, :, 0]
+        out[:, :, 0] = L
         out[:, :, 1] = a
         out[:, :, 2] = b
         out = out.astype(np.uint8)
