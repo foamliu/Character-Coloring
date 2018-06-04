@@ -5,7 +5,6 @@ import cv2 as cv
 import numpy as np
 import sklearn.neighbors as nn
 from keras.utils import Sequence
-from keras.utils import to_categorical
 
 from config import batch_size, img_rows, img_cols, nb_neighbors
 
