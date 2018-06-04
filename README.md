@@ -1,6 +1,6 @@
 # Character Coloring
 
-This repository is to do Indoor Semantic Segmentation with SegNet.
+This repository is to repeat Colorful Image Colorization with Color-Net.
 
 ## Dependencies
 - [NumPy](http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)
@@ -16,11 +16,8 @@ Follow the [instruction](http://sysu-hcp.net/lip/index.php) to download Characte
 
 ## Architecture
 
-![image](https://github.com/foamliu/Character-Coloring/raw/master/images/segnet.png)
+![image](https://github.com/foamliu/Character-Coloring/raw/master/images/color_net.png)
 
-
-## ImageNet Pretrained Models
-Download [VGG16](https://github.com/fchollet/deep-learning-models/releases/download/v0.1/vgg16_weights_tf_dim_ordering_tf_kernels.h5) into models folder.
 
 ## Usage
 ### Data Pre-processing

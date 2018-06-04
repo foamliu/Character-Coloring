@@ -5,13 +5,12 @@ import cv2 as cv
 import numpy as np
 import sklearn.neighbors as nn
 from keras.utils import Sequence
+from keras.utils import to_categorical
 
 from config import batch_size, img_rows, img_cols, nb_neighbors
 
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
-train_categories_folder = 'data/instance-level_human_parsing/Training/Categories'
 valid_images_folder = 'data/instance-level_human_parsing/Validation/Images'
-valid_categories_folder = 'data/instance-level_human_parsing/Validation/Categories'
 
 
 def random_choice(image_size):
@@ -34,22 +33,22 @@ def safe_crop(mat, x, y):
     return ret
 
 
-def get_soft_encoding(X, nn_finder, nb_q):
+def get_soft_encoding(image_ab, nn_finder, nb_q):
     sigma_neighbor = 5
 
     # Get the distance to and the idx of the nearest neighbors
-    dist_neighb, idx_neigh = nn_finder.kneighbors(X)
+    dist_neighb, idx_neigh = nn_finder.kneighbors(image_ab)
 
     # Smooth the weights with a gaussian kernel
     wts = np.exp(-dist_neighb ** 2 / (2 * sigma_neighbor ** 2))
     wts = wts / np.sum(wts, axis=1)[:, np.newaxis]
 
     # format the target
-    Y = np.zeros((X.shape[0], nb_q))
-    idx_pts = np.arange(X.shape[0])[:, np.newaxis]
-    Y[idx_pts, idx_neigh] = wts
+    y = np.zeros((image_ab.shape[0], nb_q))
+    idx_pts = np.arange(image_ab.shape[0])[:, np.newaxis]
+    y[idx_pts, idx_neigh] = wts
 
-    return Y
+    return y
 
 
 class DataGenSequence(Sequence):
@@ -59,11 +58,9 @@ class DataGenSequence(Sequence):
         if usage == 'train':
             id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
             self.images_folder = train_images_folder
-            self.categories_folder = train_categories_folder
         else:
             id_file = 'data/instance-level_human_parsing/Validation/val_id.txt'
             self.images_folder = valid_images_folder
-            self.categories_folder = valid_categories_folder
 
         with open(id_file, 'r') as f:
             self.names = f.read().splitlines()
@@ -84,28 +81,28 @@ class DataGenSequence(Sequence):
 
         length = min(batch_size, (len(self.names) - i))
         batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float32)
-        batch_y = np.empty((length, img_rows, img_cols, 3), dtype=np.float32)
+        batch_y = np.empty((length, img_rows, img_cols, self.nb_q), dtype=np.int32)
 
         for i_batch in range(length):
             name = self.names[i]
             filename = os.path.join(self.images_folder, name + '.jpg')
-            image = cv.imread(filename)
-            image_size = image.shape[:2]
-            gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+            # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
+            bgr = cv.imread(filename)
+            # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
+            lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
+            image_size = lab.shape[:2]
 
             x, y = random_choice(image_size)
-            image = safe_crop(image, x, y)
-            gray = safe_crop(gray, x, y)
+            lab = safe_crop(lab, x, y)
 
             if np.random.random_sample() > 0.5:
-                image = np.fliplr(image)
-                gray = np.fliplr(gray)
+                lab = np.fliplr(lab)
 
-            x = gray / 255.
-            y = image / 255.
+            x = lab[:, :, 0] / 255.
+            y = get_soft_encoding(lab[:, :, 1:], self.nn_finder, self.nb_q)
 
             batch_x[i_batch, :, :, 0] = x
-            batch_y[i_batch, :, :, 0:3] = y
+            batch_y[i_batch, :, :, :] = to_categorical(y, self.nb_q)
 
             i += 1
 

@@ -13,7 +13,7 @@ if __name__ == '__main__':
     img_rows, img_cols = 320, 320
     channel = 3
 
-    model_weights_path = 'models/model.12-0.0720.hdf5'
+    model_weights_path = 'models/model.03-0.0091.hdf5'
     model = build_encoder_decoder()
     model.load_weights(model_weights_path)
 
@@ -29,28 +29,40 @@ if __name__ == '__main__':
     for i in range(len(samples)):
         image_name = samples[i]
         filename = os.path.join(test_images_folder, image_name + '.jpg')
-        image = cv.imread(filename)
-        image_size = image.shape[:2]
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
+        bgr = cv.imread(filename)
+        # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
+        lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
+        image_size = bgr.shape[:2]
 
         x, y = random_choice(image_size)
-        image = safe_crop(image, x, y)
-        gray = safe_crop(gray, x, y)
+        bgr = safe_crop(bgr, x, y)
+        lab = safe_crop(lab, x, y)
         print('Start processing image: {}'.format(filename))
 
-        x_test = np.empty((1, img_rows, img_cols, 3), dtype=np.float32)
-        x_test[0, :, :, 0] = gray / 255.
+        x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
+        x_test[0, :, :, 0] = lab[:, :, 0] / 255.
 
-        out = model.predict(x_test)
-        out = np.reshape(out, (img_rows, img_cols, 3))
-        out = out * 255.
+        # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
+        ab = model.predict(x_test)
+        ab = np.reshape(ab, (img_rows, img_cols, 2))
+        a = ab[:, :, 0] * 184 + 42
+        b = ab[:, :, 1] * 203 + 20
+
+        out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
+        out[:, :, 0] = lab[:, :, 0]
+        out[:, :, 1] = a
+        out[:, :, 2] = b
         out = out.astype(np.uint8)
+        out = cv.cvtColor(out, cv.COLOR_LAB2BGR)
 
         if not os.path.exists('images'):
             os.makedirs('images')
 
+        bgr = bgr.astype(np.uint8)
+        gray = (lab[:, :, 0]).astype(np.uint8)
         cv.imwrite('images/{}_image.png'.format(i), gray)
-        cv.imwrite('images/{}_gt.png'.format(i), image)
+        cv.imwrite('images/{}_gt.png'.format(i), bgr)
         cv.imwrite('images/{}_out.png'.format(i), out)
 
     K.clear_session()
