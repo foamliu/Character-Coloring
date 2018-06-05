@@ -51,17 +51,22 @@ if __name__ == '__main__':
         q_a = q_ab[:, 0].reshape((1, 313))
         q_b = q_ab[:, 1].reshape((1, 313))
 
+        L = lab[:, :, 0]
+
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         X_colorized = model.predict(x_test)
         X_colorized = X_colorized.reshape((h * w, nb_q))
-        X_a = np.sum(X_colorized * q_a, 1).reshape((h, w))
-        X_b = np.sum(X_colorized * q_b, 1).reshape((h, w))
-        L = lab[:, :, 0]
+        X_a = np.sum(X_colorized * q_a, 1).reshape((h, w)) + 128
+        X_b = np.sum(X_colorized * q_b, 1).reshape((h, w)) + 128
+        print('np.max(X_a): ' + str(np.max(X_a)))
+        print('np.min(X_a): ' + str(np.min(X_a)))
+        print('np.max(X_b): ' + str(np.max(X_b)))
+        print('np.min(X_b): ' + str(np.min(X_b)))
 
         out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
         out[:, :, 0] = L
-        out[:, :, 1] = X_a + 128
-        out[:, :, 2] = X_b + 128
+        out[:, :, 1] = X_a
+        out[:, :, 2] = X_b
         out = out.astype(np.uint8)
         out = cv.cvtColor(out, cv.COLOR_LAB2BGR)
 
