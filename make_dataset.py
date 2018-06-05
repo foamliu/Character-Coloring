@@ -82,7 +82,7 @@ def compute_color_prior(X_ab, size=64, do_plot=False):
 
 
 def smooth_color_prior(size=64, sigma=5, do_plot=False):
-    prior_prob = np.load(os.path.join(data_dir, "CelebA_%s_prior_prob.npy" % size))
+    prior_prob = np.load(os.path.join(data_dir, "prior_prob.npy"))
     # add an epsilon to prior prob to avoid 0 vakues and possible NaN
     prior_prob += 1E-3 * np.min(prior_prob)
     # renormalize
@@ -99,7 +99,7 @@ def smooth_color_prior(size=64, sigma=5, do_plot=False):
     prior_prob_smoothed = prior_prob_smoothed / np.sum(prior_prob_smoothed)
 
     # Save
-    file_name = os.path.join(data_dir, "CelebA_%s_prior_prob_smoothed.npy" % size)
+    file_name = os.path.join(data_dir, "prior_prob_smoothed.npy")
     np.save(file_name, prior_prob_smoothed)
 
     if do_plot:
@@ -111,7 +111,7 @@ def smooth_color_prior(size=64, sigma=5, do_plot=False):
 
 
 def compute_prior_factor(size=64, gamma=0.5, alpha=1, do_plot=False):
-    file_name = os.path.join(data_dir, "CelebA_%s_prior_prob_smoothed.npy" % size)
+    file_name = os.path.join(data_dir, "prior_prob_smoothed.npy")
     prior_prob_smoothed = np.load(file_name)
 
     u = np.ones_like(prior_prob_smoothed)
@@ -123,7 +123,7 @@ def compute_prior_factor(size=64, gamma=0.5, alpha=1, do_plot=False):
     # renormalize
     prior_factor = prior_factor / (np.sum(prior_factor * prior_prob_smoothed))
 
-    file_name = os.path.join(data_dir, "CelebA_%s_prior_factor.npy" % size)
+    file_name = os.path.join(data_dir, "prior_factor.npy")
     np.save(file_name, prior_factor)
 
     if do_plot:
@@ -137,6 +137,6 @@ if __name__ == '__main__':
     do_plot = True
 
     X_ab = load_data()
-    compute_color_prior(X_ab, do_plot=True)
-    smooth_color_prior(do_plot=True)
-    compute_prior_factor(do_plot=True)
+    compute_color_prior(X_ab, do_plot=False)
+    smooth_color_prior(do_plot=False)
+    compute_prior_factor(do_plot=False)
