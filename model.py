@@ -5,6 +5,7 @@ from keras.models import Model
 from keras.utils import multi_gpu_model
 from keras.utils import plot_model
 
+from config import img_rows, img_cols
 from custom_layers.unpooling_layer import Unpooling
 
 
@@ -12,7 +13,7 @@ def build_encoder_decoder():
     kernel = 3
 
     # Encoder
-    input_tensor = Input(shape=(320, 320, 1))
+    input_tensor = Input(shape=(img_rows, img_cols, 1))
     x = Conv2D(64, (kernel, kernel), activation='relu', padding='same', name='conv1_1',
                kernel_initializer='he_normal',
                bias_initializer='zeros')(input_tensor)

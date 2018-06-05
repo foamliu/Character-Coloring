@@ -6,11 +6,11 @@ import cv2 as cv
 import keras.backend as K
 import numpy as np
 
+from config import img_rows, img_cols
 from data_generator import random_choice, safe_crop
 from model import build_encoder_decoder
 
 if __name__ == '__main__':
-    img_rows, img_cols = 320, 320
     channel = 3
 
     model_weights_path = 'models/model.00-8.0955.hdf5'
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
         x_test[0, :, :, 0] = lab[:, :, 0] / 255.
 
-        h, w = 320, 320
+        h, w = img_rows, img_cols
         batch_size = 1
         q_ab = np.load("data/pts_in_hull.npy")
         nb_q = q_ab.shape[0]
