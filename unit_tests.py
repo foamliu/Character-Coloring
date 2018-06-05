@@ -1,9 +1,11 @@
+import os
+import random
 import unittest
+
+import cv2 as cv
 import numpy as np
 import sklearn.neighbors as nn
-import random
-import os
-import cv2 as cv
+
 from data_generator import get_soft_encoding
 
 
@@ -28,7 +30,6 @@ class TestStringMethods(unittest.TestCase):
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
         y = get_soft_encoding(lab[:, :, 1:], nn_finder, nb_q)
-
 
 
 if __name__ == '__main__':

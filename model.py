@@ -1,6 +1,6 @@
 import keras.backend as K
 import tensorflow as tf
-from keras.layers import Input, Conv2D, BatchNormalization
+from keras.layers import Input, Conv2D, BatchNormalization, UpSampling2D
 from keras.models import Model
 from keras.utils import multi_gpu_model
 from keras.utils import plot_model
@@ -30,14 +30,14 @@ def build_encoder_decoder():
     x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv4_3')(x)
     x = BatchNormalization()(x)
 
-    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv5_1')(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv5_2')(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv5_3')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', dilation_rate=2, name='conv5_1')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', dilation_rate=2, name='conv5_2')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', dilation_rate=2, name='conv5_3')(x)
     x = BatchNormalization()(x)
 
-    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv6_1')(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv6_2')(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv6_3')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', dilation_rate=2, name='conv6_1')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', dilation_rate=2, name='conv6_2')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', dilation_rate=2, name='conv6_3')(x)
     x = BatchNormalization()(x)
 
     x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='conv7_1')(x)
@@ -45,7 +45,8 @@ def build_encoder_decoder():
     x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='conv7_3')(x)
     x = BatchNormalization()(x)
 
-    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_1', strides=(0.5, 0.5))(x)
+    x = UpSampling2D(size=(2, 2))(x)
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_1')(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_2')(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_3')(x)
     x = BatchNormalization()(x)
