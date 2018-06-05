@@ -61,6 +61,10 @@ if __name__ == '__main__':
         print('np.min(X_b): ' + str(np.min(X_b)))
         X_a = cv.resize(X_a, (img_rows, img_cols), cv.INTER_CUBIC)
         X_b = cv.resize(X_b, (img_rows, img_cols), cv.INTER_CUBIC)
+        print('np.max(X_a): ' + str(np.max(X_a)))
+        print('np.min(X_a): ' + str(np.min(X_a)))
+        print('np.max(X_b): ' + str(np.max(X_b)))
+        print('np.min(X_b): ' + str(np.min(X_b)))
 
         out_lab = np.empty((img_rows, img_cols, 3), dtype=np.float32)
         out_lab[:, :, 0] = lab[:, :, 0]
