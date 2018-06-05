@@ -25,14 +25,18 @@ if __name__ == '__main__':
 
     samples = random.sample(names, 10)
 
+    h, w = img_rows // 4, img_cols // 4
+    q_ab = np.load("data/pts_in_hull.npy")
+    nb_q = q_ab.shape[0]
+
     for i in range(len(samples)):
         image_name = samples[i]
         filename = os.path.join(test_images_folder, image_name + '.jpg')
         # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
         bgr = cv.imread(filename)
+        bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
-        image_size = bgr.shape[:2]
 
         print('Start processing image: {}'.format(filename))
 
@@ -41,11 +45,6 @@ if __name__ == '__main__':
 
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         X_colorized = model.predict(x_test)
-
-        h, w = img_rows // 4, img_cols // 4
-        q_ab = np.load("data/pts_in_hull.npy")
-        nb_q = q_ab.shape[0]
-
         X_colorized = X_colorized.reshape((h * w, nb_q))
 
         q_a = q_ab[:, 0].reshape((1, 313))
