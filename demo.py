@@ -64,8 +64,8 @@ if __name__ == '__main__':
 
         out_lab = np.empty((img_rows, img_cols, 3), dtype=np.float32)
         out_lab[:, :, 0] = lab[:, :, 0]
-        out_lab[:, :, 1] = X_a
-        out_lab[:, :, 2] = X_b
+        # out_lab[:, :, 1] = X_a
+        # out_lab[:, :, 2] = X_b
         out_lab = out_lab.astype(np.int32)
         out_rgb = color.lab2rgb(out_lab)
         out_bgr = out_rgb[:, :, ::-1]
