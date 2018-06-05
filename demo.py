@@ -72,7 +72,7 @@ if __name__ == '__main__':
         # out_lab[:, :, 2] = X_b
         out_lab = out_lab.astype(np.int32)
         out_rgb = color.lab2rgb(out_lab)
-        out_bgr = out_rgb[:, :, ::-1]
+        out_bgr = out_rgb[:, :, ::-1] * 255.
         out_bgr = out_bgr.astype(np.uint8)
 
         if not os.path.exists('images'):
