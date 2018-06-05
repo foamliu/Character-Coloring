@@ -35,14 +35,17 @@ if __name__ == '__main__':
         filename = os.path.join(test_images_folder, image_name + '.jpg')
         # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
         bgr = cv.imread(filename)
+        gray = cv.imread(filename, 0)
         bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
+        gray = cv.resize(gray, (img_rows, img_cols), cv.INTER_CUBIC)
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
-        lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
+        rgb = bgr[:, :, ::-1]
+        lab = color.rgb2lab(rgb)
 
         print('Start processing image: {}'.format(filename))
 
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
-        x_test[0, :, :, 0] = lab[:, :, 0] / 255.
+        x_test[0, :, :, 0] = gray / 255.
 
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         X_colorized = model.predict(x_test)

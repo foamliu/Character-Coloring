@@ -71,9 +71,11 @@ class DataGenSequence(Sequence):
             # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
             bgr = cv.imread(filename)
             bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
+            gray = cv.imread(filename, 0)
+            gray = cv.resize(gray, (img_rows, img_cols), cv.INTER_CUBIC)
             rgb = bgr[:, :, ::-1]
             lab = color.rgb2lab(rgb)
-            x = lab[:, :, 0] / 255.
+            x = gray / 255.
 
             out_lab = cv.resize(lab, (out_img_rows, out_img_cols), cv.INTER_CUBIC)
             y = get_soft_encoding(out_lab[:, :, 1:], self.nn_finder, self.nb_q)
