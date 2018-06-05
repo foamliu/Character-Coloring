@@ -46,9 +46,9 @@ def build_encoder_decoder():
     x = BatchNormalization()(x)
 
     x = UpSampling2D(size=(2, 2))(x)
-    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_1')(x)
-    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_2')(x)
-    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_3')(x)
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='conv8_1')(x)
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='conv8_2')(x)
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='conv8_3')(x)
     x = BatchNormalization()(x)
 
     outputs = Conv2D(num_classes, (1, 1), activation='softmax', padding='same', name='pred')(x)
