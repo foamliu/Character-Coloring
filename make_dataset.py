@@ -45,7 +45,7 @@ def compute_color_prior(X_ab, size=64, do_plot=False):
     X_ab = np.vstack((X_a, X_b)).T
 
     if do_plot:
-        plt.hist2d(X_ab[:, 0], X_ab[:, 1], bins=100, norm=LogNorm())
+        plt.hist2d(X_ab[:, 0], X_ab[:, 1], bins=100, normed=True, norm=LogNorm())
         plt.xlim([-110, 110])
         plt.ylim([-110, 110])
         plt.colorbar()
