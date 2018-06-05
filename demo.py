@@ -13,7 +13,7 @@ if __name__ == '__main__':
     img_rows, img_cols = 320, 320
     channel = 3
 
-    model_weights_path = 'models/model.33-0.0073.hdf5'
+    model_weights_path = 'models/model.00-8.0955.hdf5'
     model = build_encoder_decoder()
     model.load_weights(model_weights_path)
 
@@ -43,17 +43,25 @@ if __name__ == '__main__':
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
         x_test[0, :, :, 0] = lab[:, :, 0] / 255.
 
+        h, w = 320, 320
+        batch_size = 1
+        q_ab = np.load("data/pts_in_hull.npy")
+        nb_q = q_ab.shape[0]
+
+        q_a = q_ab[:, 0].reshape((1, 313))
+        q_b = q_ab[:, 1].reshape((1, 313))
+
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
-        ab = model.predict(x_test)
-        ab = ab[0, :, :, :]
+        X_colorized = model.predict(x_test)
+        X_colorized = X_colorized.reshape((h * w, nb_q))
+        X_a = np.sum(X_colorized * q_a, 1).reshape((h, w))
+        X_b = np.sum(X_colorized * q_b, 1).reshape((h, w))
         L = lab[:, :, 0]
-        a = ab[:, :, 0] * 184 + 42
-        b = ab[:, :, 1] * 203 + 20
 
         out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
         out[:, :, 0] = L
-        out[:, :, 1] = a
-        out[:, :, 2] = b
+        out[:, :, 1] = X_a + 128
+        out[:, :, 2] = X_b + 128
         out = out.astype(np.uint8)
         out = cv.cvtColor(out, cv.COLOR_LAB2BGR)
 
