@@ -3,7 +3,7 @@ import numpy as np
 
 img_rows, img_cols = 256, 256
 channel = 3
-batch_size = 80
+batch_size = 96
 epochs = 1000
 patience = 50
 num_train_samples = 28280

@@ -4,6 +4,7 @@ import cv2 as cv
 import numpy as np
 import sklearn.neighbors as nn
 from keras.utils import Sequence
+from skimage import color
 
 from config import batch_size, img_rows, img_cols, nb_neighbors
 
@@ -12,7 +13,6 @@ valid_images_folder = 'data/instance-level_human_parsing/Validation/Images'
 
 
 def get_soft_encoding(image_ab, nn_finder, nb_q):
-    image_ab = image_ab.astype(np.int32) - 128
     h, w = image_ab.shape[:2]
     a = np.ravel(image_ab[:, :, 0])
     b = np.ravel(image_ab[:, :, 1])
@@ -71,8 +71,8 @@ class DataGenSequence(Sequence):
             # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
             bgr = cv.imread(filename)
             bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
-            # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
-            lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
+            rgb = bgr[:, :, ::-1]
+            lab = color.rgb2lab(rgb)
             x = lab[:, :, 0] / 255.
 
             out_lab = cv.resize(lab, (out_img_rows, out_img_cols), cv.INTER_CUBIC)

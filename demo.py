@@ -5,6 +5,7 @@ import random
 import cv2 as cv
 import keras.backend as K
 import numpy as np
+from skimage import color
 
 from config import img_rows, img_cols
 from model import build_encoder_decoder
@@ -49,8 +50,8 @@ if __name__ == '__main__':
 
         q_a = q_ab[:, 0].reshape((1, 313))
         q_b = q_ab[:, 1].reshape((1, 313))
-        X_a = np.sum(X_colorized * q_a, 1).reshape((h, w)) + 128
-        X_b = np.sum(X_colorized * q_b, 1).reshape((h, w)) + 128
+        X_a = np.sum(X_colorized * q_a, 1).reshape((h, w))
+        X_b = np.sum(X_colorized * q_b, 1).reshape((h, w))
         print('np.max(X_a): ' + str(np.max(X_a)))
         print('np.min(X_a): ' + str(np.min(X_a)))
         print('np.max(X_b): ' + str(np.max(X_b)))
@@ -58,12 +59,14 @@ if __name__ == '__main__':
         X_a = cv.resize(X_a, (img_rows, img_cols), cv.INTER_CUBIC)
         X_b = cv.resize(X_b, (img_rows, img_cols), cv.INTER_CUBIC)
 
-        out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
-        out[:, :, 0] = lab[:, :, 0]
-        out[:, :, 1] = X_a
-        out[:, :, 2] = X_b
-        out = out.astype(np.uint8)
-        out = cv.cvtColor(out, cv.COLOR_LAB2BGR)
+        out_lab = np.empty((img_rows, img_cols, 3), dtype=np.float32)
+        out_lab[:, :, 0] = lab[:, :, 0]
+        out_lab[:, :, 1] = X_a
+        out_lab[:, :, 2] = X_b
+        out_lab = out_lab.astype(np.int32)
+        out_rgb = color.lab2rgb(out_lab)
+        out_bgr = out_rgb[:, :, ::-1]
+        out_bgr = out_bgr.astype(np.uint8)
 
         if not os.path.exists('images'):
             os.makedirs('images')
@@ -72,6 +75,6 @@ if __name__ == '__main__':
         gray = (lab[:, :, 0]).astype(np.uint8)
         cv.imwrite('images/{}_image.png'.format(i), gray)
         cv.imwrite('images/{}_gt.png'.format(i), bgr)
-        cv.imwrite('images/{}_out.png'.format(i), out)
+        cv.imwrite('images/{}_out.png'.format(i), out_bgr)
 
     K.clear_session()
