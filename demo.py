@@ -7,7 +7,6 @@ import keras.backend as K
 import numpy as np
 
 from config import img_rows, img_cols
-from data_generator import random_choice, safe_crop
 from model import build_encoder_decoder
 
 if __name__ == '__main__':
@@ -35,36 +34,33 @@ if __name__ == '__main__':
         lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
         image_size = bgr.shape[:2]
 
-        x, y = random_choice(image_size)
-        bgr = safe_crop(bgr, x, y)
-        lab = safe_crop(lab, x, y)
         print('Start processing image: {}'.format(filename))
 
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
         x_test[0, :, :, 0] = lab[:, :, 0] / 255.
 
-        h, w = img_rows, img_cols
-        batch_size = 1
+        # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
+        X_colorized = model.predict(x_test)
+
+        h, w = img_rows // 4, img_cols // 4
         q_ab = np.load("data/pts_in_hull.npy")
         nb_q = q_ab.shape[0]
 
+        X_colorized = X_colorized.reshape((h * w, nb_q))
+
         q_a = q_ab[:, 0].reshape((1, 313))
         q_b = q_ab[:, 1].reshape((1, 313))
-
-        L = lab[:, :, 0]
-
-        # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
-        X_colorized = model.predict(x_test)
-        X_colorized = X_colorized.reshape((h * w, nb_q))
         X_a = np.sum(X_colorized * q_a, 1).reshape((h, w)) + 128
         X_b = np.sum(X_colorized * q_b, 1).reshape((h, w)) + 128
         print('np.max(X_a): ' + str(np.max(X_a)))
         print('np.min(X_a): ' + str(np.min(X_a)))
         print('np.max(X_b): ' + str(np.max(X_b)))
         print('np.min(X_b): ' + str(np.min(X_b)))
+        X_a = cv.resize(X_a, (img_rows, img_cols), cv.INTER_CUBIC)
+        X_b = cv.resize(X_b, (img_rows, img_cols), cv.INTER_CUBIC)
 
         out = np.empty((img_rows, img_cols, 3), dtype=np.float32)
-        out[:, :, 0] = L
+        out[:, :, 0] = lab[:, :, 0]
         out[:, :, 1] = X_a
         out[:, :, 2] = X_b
         out = out.astype(np.uint8)

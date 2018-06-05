@@ -62,23 +62,25 @@ class DataGenSequence(Sequence):
         out_img_rows, out_img_cols = img_rows // 4, img_cols // 4
 
         length = min(batch_size, (len(self.names) - i))
-        batch_x = np.empty((length, out_img_rows, out_img_cols, 1), dtype=np.float16)
-        batch_y = np.empty((length, out_img_rows, out_img_cols, self.nb_q), dtype=np.float16)
+        batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float32)
+        batch_y = np.empty((length, out_img_rows, out_img_cols, self.nb_q), dtype=np.float32)
 
         for i_batch in range(length):
             name = self.names[i]
             filename = os.path.join(self.images_folder, name + '.jpg')
             # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
             bgr = cv.imread(filename)
-            bgr = cv.resize(bgr, (out_img_rows, out_img_cols), cv.INTER_CUBIC)
+            bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
             # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
             lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
+            x = lab[:, :, 0] / 255.
+
+            out_lab = cv.resize(lab, (out_img_rows, out_img_cols), cv.INTER_CUBIC)
+            y = get_soft_encoding(out_lab[:, :, 1:], self.nn_finder, self.nb_q)
 
             if np.random.random_sample() > 0.5:
-                lab = np.fliplr(lab)
-
-            x = lab[:, :, 0] / 255.
-            y = get_soft_encoding(lab[:, :, 1:], self.nn_finder, self.nb_q)
+                x = np.fliplr(x)
+                y = np.fliplr(y)
 
             batch_x[i_batch, :, :, 0] = x
             batch_y[i_batch] = y
