@@ -59,16 +59,18 @@ class DataGenSequence(Sequence):
     def __getitem__(self, idx):
         i = idx * batch_size
 
+        out_img_rows, out_img_cols = img_rows // 4, img_cols // 4
+
         length = min(batch_size, (len(self.names) - i))
-        batch_x = np.empty((length, img_rows, img_cols, 1), dtype=np.float16)
-        batch_y = np.empty((length, img_rows, img_cols, self.nb_q), dtype=np.float16)
+        batch_x = np.empty((length, out_img_rows, out_img_cols, 1), dtype=np.float16)
+        batch_y = np.empty((length, out_img_rows, out_img_cols, self.nb_q), dtype=np.float16)
 
         for i_batch in range(length):
             name = self.names[i]
             filename = os.path.join(self.images_folder, name + '.jpg')
             # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
             bgr = cv.imread(filename)
-            bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
+            bgr = cv.resize(bgr, (out_img_rows, out_img_cols), cv.INTER_CUBIC)
             # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
             lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
 

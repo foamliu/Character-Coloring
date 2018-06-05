@@ -1,6 +1,6 @@
 import keras.backend as K
 import tensorflow as tf
-from keras.layers import Input, Conv2D, UpSampling2D, BatchNormalization, MaxPooling2D
+from keras.layers import Input, Conv2D, BatchNormalization
 from keras.models import Model
 from keras.utils import multi_gpu_model
 from keras.utils import plot_model
@@ -45,8 +45,7 @@ def build_encoder_decoder():
     x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='conv7_3')(x)
     x = BatchNormalization()(x)
 
-    x = UpSampling2D(size=(2, 2))(x)
-    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_1')(x)
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_1', strides=(0.5, 0.5))(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_2')(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_3')(x)
     x = BatchNormalization()(x)
