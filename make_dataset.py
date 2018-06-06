@@ -24,6 +24,7 @@ def load_data(size=64):
         # rgb = bgr[:, :, ::-1]
         # lab = color.rgb2lab(rgb)
         lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
+        lab = lab.astype(np.int32)
         X_ab[i] = lab[:, :, 1:] - 128
     return X_ab
 
