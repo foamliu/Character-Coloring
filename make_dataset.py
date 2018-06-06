@@ -8,7 +8,6 @@ import sklearn.neighbors as nn
 from matplotlib.colors import LogNorm
 from scipy.interpolate import interp1d
 from scipy.signal import gaussian, convolve
-# from skimage import color
 
 
 def load_data(size=64):
@@ -21,8 +20,6 @@ def load_data(size=64):
         filename = os.path.join(images_folder, name)
         bgr = cv.imread(filename)
         bgr = cv.resize(bgr, (size, size), cv.INTER_CUBIC)
-        # rgb = bgr[:, :, ::-1]
-        # lab = color.rgb2lab(rgb)
         lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
         lab = lab.astype(np.int32)
         X_ab[i] = lab[:, :, 1:] - 128

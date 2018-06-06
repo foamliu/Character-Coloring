@@ -5,7 +5,6 @@ import random
 import cv2 as cv
 import keras.backend as K
 import numpy as np
-from skimage import color
 
 from config import img_rows, img_cols
 from model import build_encoder_decoder
@@ -33,14 +32,14 @@ if __name__ == '__main__':
     for i in range(len(samples)):
         image_name = samples[i]
         filename = os.path.join(test_images_folder, image_name + '.jpg')
+        print('Start processing image: {}'.format(filename))
         # b: 0 <=b<=255, g: 0 <=g<=255, r: 0 <=r<=255.
         bgr = cv.imread(filename)
         gray = cv.imread(filename, 0)
         bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
         gray = cv.resize(gray, (img_rows, img_cols), cv.INTER_CUBIC)
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
-        rgb = bgr[:, :, ::-1]
-        lab = color.rgb2lab(rgb)
+        lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
         L = lab[:, :, 0]
         a = lab[:, :, 1]
         b = lab[:, :, 2]
@@ -50,9 +49,6 @@ if __name__ == '__main__':
         print('np.min(a): ' + str(np.min(a)))
         print('np.max(b): ' + str(np.max(b)))
         print('np.min(b): ' + str(np.min(b)))
-
-        print('Start processing image: {}'.format(filename))
-
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
         x_test[0, :, :, 0] = gray / 255.
 
@@ -70,6 +66,8 @@ if __name__ == '__main__':
         print('np.min(X_b): ' + str(np.min(X_b)))
         X_a = cv.resize(X_a, (img_rows, img_cols), cv.INTER_CUBIC)
         X_b = cv.resize(X_b, (img_rows, img_cols), cv.INTER_CUBIC)
+        X_a = X_a + 128
+        X_b = X_b + 128
         print('np.max(X_a): ' + str(np.max(X_a)))
         print('np.min(X_a): ' + str(np.min(X_a)))
         print('np.max(X_b): ' + str(np.max(X_b)))
@@ -88,18 +86,15 @@ if __name__ == '__main__':
         print('np.min(out_a): ' + str(np.min(out_a)))
         print('np.max(out_b): ' + str(np.max(out_b)))
         print('np.min(out_b): ' + str(np.min(out_b)))
-        out_lab = out_lab.astype(np.int32)
-        out_rgb = color.lab2rgb(out_lab)
-        print('np.max(out_rgb): ' + str(np.max(out_rgb)))
-        print('np.min(out_rgb): ' + str(np.min(out_rgb)))
-        out_bgr = out_rgb[:, :, ::-1] * 255.
+        out_lab = out_lab.astype(np.uint8)
+        out_bgr = cv.cvtColor(out_lab, cv.COLOR_LAB2BGR)
+        print('np.max(out_bgr): ' + str(np.max(out_bgr)))
+        print('np.min(out_bgr): ' + str(np.min(out_bgr)))
         out_bgr = out_bgr.astype(np.uint8)
 
         if not os.path.exists('images'):
             os.makedirs('images')
 
-        bgr = bgr.astype(np.uint8)
-        gray = (lab[:, :, 0]).astype(np.uint8)
         cv.imwrite('images/{}_image.png'.format(i), gray)
         cv.imwrite('images/{}_gt.png'.format(i), bgr)
         cv.imwrite('images/{}_out.png'.format(i), out_bgr)

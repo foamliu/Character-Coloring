@@ -4,7 +4,6 @@ import cv2 as cv
 import numpy as np
 import sklearn.neighbors as nn
 from keras.utils import Sequence
-from skimage import color
 
 from config import batch_size, img_rows, img_cols, nb_neighbors
 
@@ -73,11 +72,11 @@ class DataGenSequence(Sequence):
             bgr = cv.resize(bgr, (img_rows, img_cols), cv.INTER_CUBIC)
             gray = cv.imread(filename, 0)
             gray = cv.resize(gray, (img_rows, img_cols), cv.INTER_CUBIC)
-            rgb = bgr[:, :, ::-1]
-            lab = color.rgb2lab(rgb)
+            lab = cv.cvtColor(bgr, cv.COLOR_BGR2LAB)
             x = gray / 255.
 
             out_lab = cv.resize(lab, (out_img_rows, out_img_cols), cv.INTER_CUBIC)
+            out_lab = out_lab.astype(np.int32) - 128
             y = get_soft_encoding(out_lab[:, :, 1:], self.nn_finder, self.nb_q)
 
             if np.random.random_sample() > 0.5:
