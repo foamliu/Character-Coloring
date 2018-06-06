@@ -76,8 +76,11 @@ class DataGenSequence(Sequence):
             x = gray / 255.
 
             out_lab = cv.resize(lab, (out_img_rows, out_img_cols), cv.INTER_CUBIC)
-            out_lab = out_lab.astype(np.int32) - 128
-            y = get_soft_encoding(out_lab[:, :, 1:], self.nn_finder, self.nb_q)
+            # Before: 42 <=a<= 226, 20 <=b<= 223
+            # After: -86 <=a<= 98, -108 <=b<= 95
+            out_ab = out_lab[:, :, 1:].astype(np.int32) - 128
+
+            y = get_soft_encoding(out_ab, self.nn_finder, self.nb_q)
 
             if np.random.random_sample() > 0.5:
                 x = np.fliplr(x)

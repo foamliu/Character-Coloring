@@ -43,12 +43,12 @@ if __name__ == '__main__':
         L = lab[:, :, 0]
         a = lab[:, :, 1]
         b = lab[:, :, 2]
-        print('np.max(L): ' + str(np.max(L)))
-        print('np.min(L): ' + str(np.min(L)))
-        print('np.max(a): ' + str(np.max(a)))
-        print('np.min(a): ' + str(np.min(a)))
-        print('np.max(b): ' + str(np.max(b)))
-        print('np.min(b): ' + str(np.min(b)))
+        # print('np.max(L): ' + str(np.max(L)))
+        # print('np.min(L): ' + str(np.min(L)))
+        # print('np.max(a): ' + str(np.max(a)))
+        # print('np.min(a): ' + str(np.min(a)))
+        # print('np.max(b): ' + str(np.max(b)))
+        # print('np.min(b): ' + str(np.min(b)))
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
         x_test[0, :, :, 0] = gray / 255.
 
@@ -60,18 +60,21 @@ if __name__ == '__main__':
         q_b = q_ab[:, 1].reshape((1, 313))
         X_a = np.sum(X_colorized * q_a, 1).reshape((h, w))
         X_b = np.sum(X_colorized * q_b, 1).reshape((h, w))
-        print('np.max(X_a): ' + str(np.max(X_a)))
-        print('np.min(X_a): ' + str(np.min(X_a)))
-        print('np.max(X_b): ' + str(np.max(X_b)))
-        print('np.min(X_b): ' + str(np.min(X_b)))
+        # print('np.max(X_a): ' + str(np.max(X_a)))
+        # print('np.min(X_a): ' + str(np.min(X_a)))
+        # print('np.max(X_b): ' + str(np.max(X_b)))
+        # print('np.min(X_b): ' + str(np.min(X_b)))
         X_a = cv.resize(X_a, (img_rows, img_cols), cv.INTER_CUBIC)
         X_b = cv.resize(X_b, (img_rows, img_cols), cv.INTER_CUBIC)
+
+        # Before: -90 <=a<= 100, -110 <=b<= 110
+        # After: 38 <=a<= 228, 18 <=b<= 238
         X_a = X_a + 128
         X_b = X_b + 128
-        print('np.max(X_a): ' + str(np.max(X_a)))
-        print('np.min(X_a): ' + str(np.min(X_a)))
-        print('np.max(X_b): ' + str(np.max(X_b)))
-        print('np.min(X_b): ' + str(np.min(X_b)))
+        # print('np.max(X_a): ' + str(np.max(X_a)))
+        # print('np.min(X_a): ' + str(np.min(X_a)))
+        # print('np.max(X_b): ' + str(np.max(X_b)))
+        # print('np.min(X_b): ' + str(np.min(X_b)))
 
         out_lab = np.zeros((img_rows, img_cols, 3), dtype=np.int32)
         out_lab[:, :, 0] = lab[:, :, 0]
@@ -80,16 +83,16 @@ if __name__ == '__main__':
         out_L = out_lab[:, :, 0]
         out_a = out_lab[:, :, 1]
         out_b = out_lab[:, :, 2]
-        print('np.max(out_L): ' + str(np.max(out_L)))
-        print('np.min(out_L): ' + str(np.min(out_L)))
-        print('np.max(out_a): ' + str(np.max(out_a)))
-        print('np.min(out_a): ' + str(np.min(out_a)))
-        print('np.max(out_b): ' + str(np.max(out_b)))
-        print('np.min(out_b): ' + str(np.min(out_b)))
+        # print('np.max(out_L): ' + str(np.max(out_L)))
+        # print('np.min(out_L): ' + str(np.min(out_L)))
+        # print('np.max(out_a): ' + str(np.max(out_a)))
+        # print('np.min(out_a): ' + str(np.min(out_a)))
+        # print('np.max(out_b): ' + str(np.max(out_b)))
+        # print('np.min(out_b): ' + str(np.min(out_b)))
         out_lab = out_lab.astype(np.uint8)
         out_bgr = cv.cvtColor(out_lab, cv.COLOR_LAB2BGR)
-        print('np.max(out_bgr): ' + str(np.max(out_bgr)))
-        print('np.min(out_bgr): ' + str(np.min(out_bgr)))
+        # print('np.max(out_bgr): ' + str(np.max(out_bgr)))
+        # print('np.min(out_bgr): ' + str(np.min(out_bgr)))
         out_bgr = out_bgr.astype(np.uint8)
 
         if not os.path.exists('images'):
