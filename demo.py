@@ -51,7 +51,6 @@ if __name__ == '__main__':
         print('np.max(b): ' + str(np.max(b)))
         print('np.min(b): ' + str(np.min(b)))
 
-
         print('Start processing image: {}'.format(filename))
 
         x_test = np.empty((1, img_rows, img_cols, 1), dtype=np.float32)
@@ -78,10 +77,21 @@ if __name__ == '__main__':
 
         out_lab = np.zeros((img_rows, img_cols, 3), dtype=np.int32)
         out_lab[:, :, 0] = lab[:, :, 0]
-        # out_lab[:, :, 1] = X_a
-        # out_lab[:, :, 2] = X_b
+        out_lab[:, :, 1] = X_a
+        out_lab[:, :, 2] = X_b
+        out_L = out_lab[:, :, 0]
+        out_a = out_lab[:, :, 1]
+        out_b = out_lab[:, :, 2]
+        print('np.max(out_L): ' + str(np.max(out_L)))
+        print('np.min(out_L): ' + str(np.min(out_L)))
+        print('np.max(out_a): ' + str(np.max(out_a)))
+        print('np.min(out_a): ' + str(np.min(out_a)))
+        print('np.max(out_b): ' + str(np.max(out_b)))
+        print('np.min(out_b): ' + str(np.min(out_b)))
         out_lab = out_lab.astype(np.int32)
         out_rgb = color.lab2rgb(out_lab)
+        print('np.max(out_rgb): ' + str(np.max(out_rgb)))
+        print('np.min(out_rgb): ' + str(np.min(out_rgb)))
         out_bgr = out_rgb[:, :, ::-1] * 255.
         out_bgr = out_bgr.astype(np.uint8)
 
