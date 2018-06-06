@@ -5,8 +5,10 @@ import random
 import cv2 as cv
 import keras.backend as K
 import numpy as np
+import sklearn.neighbors as nn
 
 from config import img_rows, img_cols
+from config import nb_neighbors, T
 from model import build_encoder_decoder
 
 if __name__ == '__main__':
@@ -26,8 +28,16 @@ if __name__ == '__main__':
     samples = random.sample(names, 10)
 
     h, w = img_rows // 4, img_cols // 4
+
+    # Load the array of quantized ab value
     q_ab = np.load("data/pts_in_hull.npy")
     nb_q = q_ab.shape[0]
+
+    # Fit a NN to q_ab
+    nn_finder = nn.NearestNeighbors(n_neighbors=nb_neighbors, algorithm='ball_tree').fit(q_ab)
+
+    # Load the color prior factor that encourages rare colors
+    # prior_factor = np.load("data/prior_factor.npy")
 
     for i in range(len(samples)):
         image_name = samples[i]
@@ -56,8 +66,14 @@ if __name__ == '__main__':
         X_colorized = model.predict(x_test)
         X_colorized = X_colorized.reshape((h * w, nb_q))
 
+        # Reweight probas
+        X_colorized = np.exp(np.log(X_colorized) / T)
+        X_colorized = X_colorized / np.sum(X_colorized, 1)[:, np.newaxis]
+
+        # Reweighted
         q_a = q_ab[:, 0].reshape((1, 313))
         q_b = q_ab[:, 1].reshape((1, 313))
+
         X_a = np.sum(X_colorized * q_a, 1).reshape((h, w))
         X_b = np.sum(X_colorized * q_b, 1).reshape((h, w))
         # print('np.max(X_a): ' + str(np.max(X_a)))
