@@ -54,8 +54,7 @@ if __name__ == '__main__':
 
     # sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
     # decoder_target = tf.placeholder(dtype='float32', shape=(None, None, None, None))
-    # new_model.compile(optimizer='nadam', loss='categorical_crossentropy')
-    new_model.compile(optimizer='nadam', loss=categorical_crossentropy_color)
+    new_model.compile(optimizer='nadam', loss='categorical_crossentropy')
 
     print(new_model.summary())
 
