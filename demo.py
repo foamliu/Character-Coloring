@@ -41,6 +41,16 @@ if __name__ == '__main__':
         # L: 0 <=L<= 255, a: 42 <=a<= 226, b: 20 <=b<= 223.
         rgb = bgr[:, :, ::-1]
         lab = color.rgb2lab(rgb)
+        L = lab[:, :, 0]
+        a = lab[:, :, 1]
+        b = lab[:, :, 2]
+        print('np.max(L): ' + str(np.max(L)))
+        print('np.min(L): ' + str(np.min(L)))
+        print('np.max(a): ' + str(np.max(a)))
+        print('np.min(a): ' + str(np.min(a)))
+        print('np.max(b): ' + str(np.max(b)))
+        print('np.min(b): ' + str(np.min(b)))
+
 
         print('Start processing image: {}'.format(filename))
 
