@@ -138,6 +138,6 @@ if __name__ == '__main__':
     do_plot = True
 
     X_ab = load_data()
-    compute_color_prior(X_ab, do_plot=False)
-    smooth_color_prior(do_plot=False)
-    compute_prior_factor(do_plot=False)
+    compute_color_prior(X_ab, do_plot=True)
+    smooth_color_prior(do_plot=True)
+    compute_prior_factor(do_plot=True)
